@@ -38,18 +38,39 @@ def textEditor():
     window.rowconfigure(0, minsize=800, weight=1)
     window.columnconfigure(1, minsize=800, weight=1)
 
-    txt_edit = tk.Text(window)
-    fr_buttons = tk.Frame(window, relief=tk.RAISED, bd=2, bg='blue')
-    btn_open = tk.Button(fr_buttons, text='Open', command=openFile, bg='skyblue')
-    btn_save = tk.Button(fr_buttons, text='Save As...', command=saveFile, bg='skyblue')
+    menubar = tk.Menu(window)
 
-    btn_open.grid(row=0, column=0, sticky='ew', padx=5, pady=5)
-    btn_save.grid(row=1, column=0, sticky='ew', padx=5)
+    fileMenu = tk.Menu(menubar, tearoff=0)
+    fileMenu.add_command(label='Open', command=openFile)
+    fileMenu.add_command(label='Save As...', command=saveFile)
+    fileMenu.add_separator()
+    fileMenu.add_command(label='Exit', command=window.quit)
+    menubar.add_cascade(label='File', menu=fileMenu)
 
-    fr_buttons.grid(row=0, column=0, sticky='ns')
+    editMenu = tk.Menu(menubar, tearoff=0)
+    editMenu.add_command(label='Undo')
+    editMenu.add_command(label='Redo')
+    menubar.add_cascade(label='Edit', menu=editMenu)
+
+    viewMenu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label='View', menu=viewMenu)
+
+    window.config(menu=menubar)
+
+    txt_edit = tk.Text(window, undo=True, autoseparators=True)
+    scrollbar = tk.Scrollbar(window, command=txt_edit.yview)
+    txt_edit.config(yscrollcommand=scrollbar.set)
+    scrollbar.grid(row=0, column=2, sticky='ns')
+
     txt_edit.grid(row=0, column=1, sticky='nsew')
 
     sv_ttk.set_theme("dark")
+
+    # KEYBINDS
+    
+    window.bind("<Control-s>", saveFile) # save file
+
+    # END KEYBINDS
 
     window.mainloop()
 
